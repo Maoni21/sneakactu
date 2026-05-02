@@ -2,17 +2,34 @@
 const nextConfig = {
   images: {
     remotePatterns: [
+      // Sanity CDN
       {
         protocol: 'https',
         hostname: 'cdn.sanity.io',
-        port: '',
         pathname: '/images/**',
       },
+      // Unsplash (articles + logos)
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
+    formats: ['image/avif', 'image/webp'],
   },
-  // ISR revalidation par défaut
-  experimental: {
-    // Needed for Sanity Studio if embedded
+
+  // Headers de sécurité
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ]
   },
 }
 
