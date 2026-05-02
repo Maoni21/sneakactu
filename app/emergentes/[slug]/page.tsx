@@ -7,7 +7,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const revalidate = 3600
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
   const slugs = await getAllBrandSlugs().catch(() => [])
@@ -15,19 +15,21 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const brand = await getBrandBySlug(params.slug).catch(() => null)
+  const { slug } = await params
+  const brand = await getBrandBySlug(slug).catch(() => null)
   if (!brand) return {}
   return {
     title: `${brand.name} — Marque émergente`,
     description: brand.description ?? `Découvrez ${brand.name} sur SneakActu.`,
-    alternates: { canonical: `/emergentes/${params.slug}` },
+    alternates: { canonical: `/emergentes/${slug}` },
   }
 }
 
 export default async function EmergentePage({ params }: Props) {
+  const { slug } = await params
   const [brand, articles] = await Promise.all([
-    getBrandBySlug(params.slug).catch(() => null),
-    getArticlesByBrand(params.slug).catch(() => []),
+    getBrandBySlug(slug).catch(() => null),
+    getArticlesByBrand(slug).catch(() => []),
   ])
 
   if (!brand || brand.type !== 'emergente') notFound()

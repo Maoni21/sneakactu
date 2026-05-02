@@ -55,7 +55,7 @@ export const brandSchema = defineType({
       title: 'URL Instagram',
       type: 'url',
       validation: (rule) =>
-        rule.uri({ scheme: ['http', 'https'] }).optional(),
+        rule.uri({ scheme: ['http', 'https'] }),
     }),
     defineField({
       name: 'instagramFollowers',
@@ -79,7 +79,7 @@ export const brandSchema = defineType({
           { title: 'Vêtements', value: 'vetements' },
           { title: 'Accessoires', value: 'accessoires' },
         ],
-        layout: 'checkbox',
+        layout: 'grid',
       },
     }),
     defineField({

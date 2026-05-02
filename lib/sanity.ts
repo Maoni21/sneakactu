@@ -241,12 +241,9 @@ export async function getCategories(): Promise<Category[]> {
 
 // Search fulltext
 export async function searchArticles(query: string): Promise<Article[]> {
-  return sanityClient.fetch(
-    `*[_type == "article" && (title match $query || excerpt match $query || $query in tags)] | order(publishedAt desc) [0...20] {
-      ${articleFields}
-    }`,
-    { query: `${query}*` }
-  )
+  const groqQuery: string = `*[_type == "article" && (title match $query || excerpt match $query || $query in tags)] | order(publishedAt desc) [0...20] { ${articleFields} }`
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (sanityClient as any).fetch(groqQuery, { query: `${query}*` })
 }
 
 // Slugs pour generateStaticParams
