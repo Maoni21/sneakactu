@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Nécessaire pour Sanity Studio embarqué
+  transpilePackages: [
+    'sanity',
+    '@sanity/ui',
+    '@sanity/vision',
+    '@sanity/insert-menu',
+    '@sanity/types',
+    'next-sanity',
+  ],
+
   images: {
     remotePatterns: [
       // Sanity CDN
