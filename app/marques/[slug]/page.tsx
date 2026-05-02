@@ -19,10 +19,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const brand = await getBrandBySlug(slug).catch(() => null)
   if (!brand) return {}
+  const title = `Sneakers ${brand.name} — Toute l'actu | SneakActu`
+  const description = brand.description ?? `Toute l'actualité sneakers ${brand.name} sur SneakActu : nouveautés, drops, collaborations et analyses.`
+  const logoUrl = brand.logo ? urlFor(brand.logo).width(1200).height(630).format('webp').url() : '/og-image.jpg'
   return {
-    title: `Sneakers ${brand.name} — Toute l'actu`,
-    description: brand.description ?? `Toute l'actualité sneakers ${brand.name} sur SneakActu.`,
-    alternates: { canonical: `/marques/${slug}` },
+    title,
+    description,
+    alternates: { canonical: `https://sneakactu.fr/marques/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://sneakactu.fr/marques/${slug}`,
+      images: [{ url: logoUrl, width: 1200, height: 630, alt: `${brand.name} — SneakActu` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      site: '@sneakactu',
+      images: [logoUrl],
+    },
   }
 }
 
@@ -39,7 +55,31 @@ export default async function MarquePage({ params }: Props) {
     ? urlFor(brand.logo).width(200).height(200).format('webp').quality(90).url()
     : null
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://sneakactu.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Marques', item: 'https://sneakactu.fr/marques' },
+          { '@type': 'ListItem', position: 3, name: brand.name, item: `https://sneakactu.fr/marques/${slug}` },
+        ],
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': `https://sneakactu.fr/marques/${slug}`,
+        name: `Sneakers ${brand.name}`,
+        description: brand.description ?? `Toute l'actualité ${brand.name} sur SneakActu`,
+        url: `https://sneakactu.fr/marques/${slug}`,
+        inLanguage: 'fr-FR',
+      },
+    ],
+  }
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <main>
       {/* Brand header — sunken bg */}
       <header className="sa-brandhead">
@@ -83,5 +123,6 @@ export default async function MarquePage({ params }: Props) {
         )}
       </section>
     </main>
+    </>
   )
 }

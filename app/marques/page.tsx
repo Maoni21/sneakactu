@@ -8,6 +8,13 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Toutes les marques sneakers',
   description: 'Nike, Adidas, New Balance, Jordan, Asics et toutes les marques émergentes sur SneakActu.',
+  alternates: { canonical: 'https://sneakactu.fr/marques' },
+  openGraph: {
+    title: 'Toutes les marques sneakers — SneakActu',
+    description: 'Nike, Adidas, New Balance, Jordan, Asics et toutes les marques émergentes sur SneakActu.',
+    url: 'https://sneakactu.fr/marques',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+  },
 }
 
 type Props = { searchParams: Promise<{ type?: string }> }

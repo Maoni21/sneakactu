@@ -32,12 +32,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/articles/${slug}` },
+    alternates: { canonical: `https://sneakactu.fr/articles/${slug}` },
     openGraph: {
       title, description, type: 'article',
       publishedTime: article.publishedAt,
       modifiedTime: article._updatedAt,
-      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630 }] : [],
+      tags: article.tags ?? [],
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: title }] : [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      site: '@sneakactu',
+      images: imageUrl ? [imageUrl] : ['/og-image.jpg'],
     },
   }
 }
@@ -61,19 +69,34 @@ export default async function ArticlePage({ params }: Props) {
   // JSON-LD
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.excerpt,
-    image: heroUrl ?? '',
-    datePublished: article.publishedAt,
-    dateModified: article._updatedAt,
-    author: { '@type': 'Organization', name: 'SneakActu', url: 'https://sneakactu.fr' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SneakActu',
-      logo: { '@type': 'ImageObject', url: 'https://sneakactu.fr/logo.png' },
-    },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://sneakactu.fr/articles/${slug}` },
+    '@graph': [
+      {
+        '@type': 'Article',
+        '@id': `https://sneakactu.fr/articles/${slug}#article`,
+        headline: article.title,
+        description: article.excerpt,
+        image: heroUrl ? { '@type': 'ImageObject', url: heroUrl, width: 1600, height: 900 } : undefined,
+        datePublished: article.publishedAt,
+        dateModified: article._updatedAt,
+        author: { '@type': 'Organization', name: 'SneakActu', url: 'https://sneakactu.fr' },
+        publisher: {
+          '@type': 'Organization',
+          name: 'SneakActu',
+          logo: { '@type': 'ImageObject', url: 'https://sneakactu.fr/logo.svg' },
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `https://sneakactu.fr/articles/${slug}` },
+        keywords: article.tags?.join(', ') ?? '',
+        inLanguage: 'fr-FR',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://sneakactu.fr' },
+          { '@type': 'ListItem', position: 2, name: 'Articles', item: 'https://sneakactu.fr/articles' },
+          { '@type': 'ListItem', position: 3, name: article.title, item: `https://sneakactu.fr/articles/${slug}` },
+        ],
+      },
+    ],
   }
 
   return (

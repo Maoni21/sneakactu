@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     title: 'SneakActu — Actualité Sneakers & Streetwear',
     description: 'La référence française sur l\'actualité sneakers.',
     images: ['/og-image.jpg'],
+    site: '@sneakactu',
     creator: '@sneakactu',
   },
   robots: {

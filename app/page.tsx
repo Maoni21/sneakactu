@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -14,6 +15,46 @@ import EmergenteCard from '@/components/brands/EmergenteCard'
 import ReleaseCard from '@/components/releases/ReleaseCard'
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://sneakactu.fr' },
+  openGraph: {
+    url: 'https://sneakactu.fr',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'SneakActu — Actualité Sneakers' }],
+  },
+}
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://sneakactu.fr/#website',
+      url: 'https://sneakactu.fr',
+      name: 'SneakActu',
+      description: 'La référence française sur l\'actualité sneakers et streetwear',
+      inLanguage: 'fr-FR',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: { '@type': 'EntryPoint', urlTemplate: 'https://sneakactu.fr/articles?q={search_term_string}' },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+    {
+      '@type': 'Organization',
+      '@id': 'https://sneakactu.fr/#organization',
+      name: 'SneakActu',
+      url: 'https://sneakactu.fr',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://sneakactu.fr/logo.svg',
+        width: 200,
+        height: 60,
+      },
+      sameAs: ['https://www.instagram.com/sneakactu', 'https://twitter.com/sneakactu'],
+    },
+  ],
+}
 
 export default async function HomePage() {
   const [hero, articles, brands, releases] = await Promise.all([
@@ -32,6 +73,8 @@ export default async function HomePage() {
   const heroCategory = hero?.categories?.[0]?.name ?? 'Actualité'
 
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
     <main>
       {/* ── HERO ── */}
       {hero && hero.slug?.current ? (
@@ -147,5 +190,6 @@ export default async function HomePage() {
         </section>
       )}
     </main>
+    </>
   )
 }

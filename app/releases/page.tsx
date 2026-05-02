@@ -8,6 +8,13 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Calendrier des releases sneakers 2026',
   description: 'Toutes les prochaines sorties sneakers 2026 : Nike, Adidas, New Balance, Jordan… Dates, prix et liens d\'achat.',
+  alternates: { canonical: 'https://sneakactu.fr/releases' },
+  openGraph: {
+    title: 'Calendrier des releases sneakers 2026 — SneakActu',
+    description: 'Toutes les prochaines sorties sneakers 2026 : Nike, Adidas, New Balance, Jordan… Dates, prix et liens d\'achat.',
+    url: 'https://sneakactu.fr/releases',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+  },
 }
 
 export default async function ReleasesPage() {

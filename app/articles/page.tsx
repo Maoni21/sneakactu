@@ -8,6 +8,13 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'Actualités Sneakers',
   description: 'Toute l\'actualité sneakers : nouvelles sorties, collaborations, leaks et tendances streetwear.',
+  alternates: { canonical: 'https://sneakactu.fr/articles' },
+  openGraph: {
+    title: 'Actualités Sneakers — SneakActu',
+    description: 'Toute l\'actualité sneakers : nouvelles sorties, collaborations, leaks et tendances streetwear.',
+    url: 'https://sneakactu.fr/articles',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+  },
 }
 
 type Props = { searchParams: Promise<{ categorie?: string }> }

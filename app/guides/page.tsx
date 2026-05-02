@@ -7,6 +7,13 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Guides d\'achat sneakers',
   description: 'Les meilleurs guides d\'achat sneakers : tailles, comparatifs, conseils pour choisir tes prochaines paires Nike, Adidas, New Balance…',
+  alternates: { canonical: 'https://sneakactu.fr/guides' },
+  openGraph: {
+    title: 'Guides d\'achat sneakers — SneakActu',
+    description: 'Les meilleurs guides d\'achat sneakers : tailles, comparatifs, conseils pour choisir tes prochaines paires.',
+    url: 'https://sneakactu.fr/guides',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+  },
 }
 
 export default async function GuidesPage() {
