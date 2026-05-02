@@ -44,8 +44,7 @@ export default async function EmergentesPage() {
           </div>
         ) : (
           <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg-2)', fontSize: '17px', lineHeight: 1.6 }}>
-            Aucune marque émergente référencée pour le moment.{' '}
-            <Link href="/studio">Ajoutez-en dans le Studio →</Link>
+            Aucune marque émergente référencée pour le moment.
           </p>
         )}
       </section>

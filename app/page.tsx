@@ -110,14 +110,11 @@ export default async function HomePage() {
             <div className="sa-hero__shade" />
             <div className="sa-hero__overlay">
               <span className="sa-kicker sa-kicker--invert">Actualité</span>
-              <h1 className="sa-hero__title">Bienvenue sur SneakActu</h1>
+              <h1 className="sa-hero__title">SneakActu</h1>
               <div className="sa-hero__meta">
-                <span>Ajoutez vos premiers articles dans Sanity Studio</span>
+                <span>La référence sneakers & streetwear</span>
               </div>
             </div>
-            <Link href="/studio" className="sa-btn sa-btn--accent sa-hero__cta">
-              Ouvrir le Studio →
-            </Link>
           </div>
         </div>
       )}
@@ -132,8 +129,7 @@ export default async function HomePage() {
           <ArticleGrid articles={articles} cols={3} />
         ) : (
           <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg-2)', fontSize: '17px', lineHeight: 1.6 }}>
-            Aucun article publié pour le moment. Commencez à rédiger dans{' '}
-            <Link href="/studio">Sanity Studio</Link>.
+            Aucun article publié pour le moment.
           </p>
         )}
       </section>

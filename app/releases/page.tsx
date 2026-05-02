@@ -54,7 +54,7 @@ export default async function ReleasesPage() {
           </div>
         ) : (
           <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg-2)', fontSize: '17px' }}>
-            Aucune release à venir. <Link href="/studio">Ajoutez-en dans le Studio →</Link>
+            Aucune release à venir pour le moment.
           </p>
         )}
       </section>
