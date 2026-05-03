@@ -115,7 +115,7 @@ export const articleFullFields = `
 // Récupère tous les articles (listing)
 export async function getArticles(limit = 20, offset = 0): Promise<Article[]> {
   return sanityClient.fetch(
-    `*[_type == "article"] | order(publishedAt desc) [${offset}...${offset + limit}] {
+    `*[_type == "article" && !(_id in path("drafts.**"))] | order(publishedAt desc) [${offset}...${offset + limit}] {
       ${articleFields}
     }`
   )
@@ -124,7 +124,7 @@ export async function getArticles(limit = 20, offset = 0): Promise<Article[]> {
 // Article individuel par slug
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   return sanityClient.fetch(
-    `*[_type == "article" && slug.current == $slug][0] {
+    `*[_type == "article" && !(_id in path("drafts.**")) && slug.current == $slug][0] {
       ${articleFullFields}
     }`,
     { slug }
@@ -138,7 +138,7 @@ export async function getSimilarArticles(
   limit = 3
 ): Promise<Article[]> {
   return sanityClient.fetch(
-    `*[_type == "article" && _id != $articleId && count(categories[@._ref in $categoryIds]) > 0] | order(publishedAt desc) [0...$limit] {
+    `*[_type == "article" && !(_id in path("drafts.**")) && _id != $articleId && count(categories[@._ref in $categoryIds]) > 0] | order(publishedAt desc) [0...$limit] {
       ${articleFields}
     }`,
     { articleId, categoryIds, limit }
@@ -150,7 +150,6 @@ export async function getArticlesByBrand(
   brandSlug: string,
   limit = 20
 ): Promise<Article[]> {
-  // Récupérer le nom de la marque pour chercher aussi dans les tags
   const brand = await sanityClient.fetch(
     `*[_type == "brand" && slug.current == $brandSlug][0]{ name }`,
     { brandSlug }
@@ -158,7 +157,7 @@ export async function getArticlesByBrand(
   const brandName = brand?.name ?? ''
 
   return sanityClient.fetch(
-    `*[_type == "article" && (
+    `*[_type == "article" && !(_id in path("drafts.**")) && (
       $brandSlug in brands[]->slug.current ||
       $brandName in tags
     )] | order(publishedAt desc) [0...$limit] {
@@ -171,7 +170,7 @@ export async function getArticlesByBrand(
 // Derniers articles (home)
 export async function getLatestArticles(limit = 6): Promise<Article[]> {
   return sanityClient.fetch(
-    `*[_type == "article"] | order(publishedAt desc) [0...$limit] {
+    `*[_type == "article" && !(_id in path("drafts.**"))] | order(publishedAt desc) [0...$limit] {
       ${articleFields}
     }`,
     { limit }
@@ -181,7 +180,7 @@ export async function getLatestArticles(limit = 6): Promise<Article[]> {
 // Article hero (le plus récent)
 export async function getHeroArticle(): Promise<Article | null> {
   return sanityClient.fetch(
-    `*[_type == "article"] | order(publishedAt desc) [0] {
+    `*[_type == "article" && !(_id in path("drafts.**"))] | order(publishedAt desc) [0] {
       ${articleFullFields}
     }`
   )
@@ -194,7 +193,7 @@ export async function getBrands(type?: 'grande-marque' | 'emergente'): Promise<B
     `*[_type == "brand" ${filter}] | order(name asc) {
       _id, name, slug, logo, description, type, instagram,
       instagramFollowers, country, productType, featured,
-      "articleCount": count(*[_type == "article" && references(^._id)])
+      "articleCount": count(*[_type == "article" && !(_id in path("drafts.**")) && references(^._id)])
     }`
   )
 }
@@ -241,7 +240,7 @@ export async function getCategories(): Promise<Category[]> {
 
 // Search fulltext
 export async function searchArticles(query: string): Promise<Article[]> {
-  const groqQuery: string = `*[_type == "article" && (title match $query || excerpt match $query || $query in tags)] | order(publishedAt desc) [0...20] { ${articleFields} }`
+  const groqQuery: string = `*[_type == "article" && !(_id in path("drafts.**")) && (title match $query || excerpt match $query || $query in tags)] | order(publishedAt desc) [0...20] { ${articleFields} }`
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (sanityClient as any).fetch(groqQuery, { query: `${query}*` })
 }
@@ -249,7 +248,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
 // Slugs pour generateStaticParams
 export async function getAllArticleSlugs(): Promise<string[]> {
   const articles = await sanityClient.fetch(
-    `*[_type == "article" && defined(slug.current)] { "slug": slug.current }`
+    `*[_type == "article" && !(_id in path("drafts.**")) && defined(slug.current)] { "slug": slug.current }`
   )
   return articles
     .map((a: { slug: string }) => a.slug)
